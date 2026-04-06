@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .glass-panel {
+    @apply bg-glassBg backdrop-blur-md border border-glassBorder rounded-2xl;
+  }
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+#root {
+  width: 100%;
+}
