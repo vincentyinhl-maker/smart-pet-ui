@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Edit2, PawPrint, Calendar, ChevronDown, Info, Camera } from 'lucide-react';
 
 const BREED_GROUPS = [
@@ -48,8 +48,18 @@ const BREED_GROUPS = [
 
 const ALL_BREEDS = BREED_GROUPS.flatMap(g => g.breeds);
 
-export default function PetHeaderInfo({ selectedBreedId = 'ragdoll', onBreedChange = () => {} }) {
-  const [name, setName] = useState('My Heybo');
+export default function PetHeaderInfo({ 
+  petId, 
+  petName = 'My Heybo', 
+  selectedBreedId = 'ragdoll', 
+  onUpdate = () => {} 
+}) {
+  const [name, setName] = useState(petName);
+  
+  // Sync name from prop (e.g. from Dashboard or Debug injection)
+  useEffect(() => {
+    setName(petName);
+  }, [petName]);
   const [isEditingName, setIsEditingName] = useState(false);
   const [customBreed, setCustomBreed] = useState('');
   const [showBreedPicker, setShowBreedPicker] = useState(false);
@@ -68,8 +78,15 @@ export default function PetHeaderInfo({ selectedBreedId = 'ragdoll', onBreedChan
   const currentBreed = ALL_BREEDS.find(b => b.id === selectedBreedId) || ALL_BREEDS[0];
 
   const handleBreedSelect = (id) => {
-    onBreedChange(id);
+    onUpdate({ breedId: id });
     setShowBreedPicker(false);
+  };
+
+  const handleNameSave = () => {
+    setIsEditingName(false);
+    if (name.trim() !== petName) {
+      onUpdate({ name: name.trim() });
+    }
   };
 
   return (
@@ -112,8 +129,8 @@ export default function PetHeaderInfo({ selectedBreedId = 'ragdoll', onBreedChan
               className="bg-gray-800/60 border border-primary/40 rounded-xl px-4 py-2 text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/50 text-white w-full max-w-xs"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              onBlur={() => setIsEditingName(false)}
-              onKeyDown={(e) => e.key === 'Enter' && setIsEditingName(false)}
+              onBlur={handleNameSave}
+              onKeyDown={(e) => e.key === 'Enter' && handleNameSave()}
               autoFocus
             />
           ) : (

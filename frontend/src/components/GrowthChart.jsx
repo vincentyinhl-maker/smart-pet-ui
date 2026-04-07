@@ -18,14 +18,22 @@ const FIXED_SENSOR_READINGS = [
   { stage: '6月龄',       weightActual: 2850, foodActual: 58,   waterActual: 138  },
   { stage: '9月龄',       weightActual: 3920, foodActual: 66,   waterActual: 168  },
   { stage: '12月龄',      weightActual: 4700, foodActual: 72,   waterActual: 185  },
-  { stage: '成年(1-8岁)', weightActual: 5250, foodActual: 68,   waterActual: 185  },
-  { stage: '老年(8岁+)',  weightActual: null, foodActual: null, waterActual: null },
+  { stage: '成年猫',       weightActual: 5250, foodActual: 68,   waterActual: 185  },
+  { stage: '老年猫(10岁+)',  weightActual: null, foodActual: null, waterActual: null },
 ];
 
-function buildChartData(breedId) {
+function buildChartData(breedId, currentData) {
   const standard = BREED_STANDARDS[breedId] || BREED_STANDARDS['mix'];
   return standard.stages.map((stage, i) => {
-    const sensor = FIXED_SENSOR_READINGS[i] || {};
+    let sensor = { ... (FIXED_SENSOR_READINGS[i] || {}) };
+    
+    // 如果存在后端下发的实测数据，将其覆盖“成年(1-8岁)”这一节点的显示，做到前后台彻底统一。
+    if (i === 5 && currentData) {
+      sensor.weightActual = currentData.weight || sensor.weightActual;
+      sensor.foodActual = currentData.foodIntake || sensor.foodActual;
+      sensor.waterActual = currentData.waterIntake || sensor.waterActual;
+    }
+
     return {
       name: stage.name,
       // Standard reference — updates with breed selection
@@ -62,9 +70,9 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-export default function GrowthChart({ breedId = 'mix' }) {
+export default function GrowthChart({ breedId = 'mix', currentData }) {
   const standard = BREED_STANDARDS[breedId] || BREED_STANDARDS['mix'];
-  const data = buildChartData(breedId);
+  const data = buildChartData(breedId, currentData);
   const isWarningBreed = breedId === 'scottish-fold';
 
   return (
@@ -105,7 +113,7 @@ export default function GrowthChart({ breedId = 'mix' }) {
       <div className="mb-6">
         <p className="text-xs text-gray-400 font-semibold uppercase tracking-widest mb-3 flex items-center space-x-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
-          <span>体重成长曲线 (g)</span>
+          <span>体重成长曲线 (kg)</span>
         </p>
         <div className="h-[260px]">
           <ResponsiveContainer width="100%" height="100%">
@@ -159,7 +167,7 @@ export default function GrowthChart({ breedId = 'mix' }) {
       <div>
         <p className="text-xs text-gray-400 font-semibold uppercase tracking-widest mb-3 flex items-center space-x-2">
           <span className="w-2 h-2 rounded-full bg-sky-400 inline-block" />
-          <span>每日饮水量 (ml/天)</span>
+          <span>每日饮水量 (g/天)</span>
         </p>
         <div className="h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
@@ -167,14 +175,14 @@ export default function GrowthChart({ breedId = 'mix' }) {
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" vertical={false} />
               <XAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 10 }} axisLine={false} tickLine={false} dy={8} />
               <YAxis tick={{ fill: '#6b7280', fontSize: 10 }} axisLine={false} tickLine={false}
-                tickFormatter={(v) => `${v}ml`} />
+                tickFormatter={(v) => `${v}g`} />
               <Tooltip content={<CustomTooltip />} />
               <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
               <Area dataKey="waterStdMax" fill="#0ea5e9" stroke="none" fillOpacity={0.10} legendType="none" />
               <Area dataKey="waterStdMin" fill="#111827" stroke="none" fillOpacity={1} legendType="none" />
               <Line dataKey="waterStdMax" name="推荐上限" stroke="#0ea5e9" strokeWidth={1} strokeDasharray="5 3" dot={false} activeDot={false} />
               <Line dataKey="waterStdMin" name="推荐下限" stroke="#0ea5e9" strokeWidth={1} strokeDasharray="5 3" dot={false} activeDot={false} legendType="none" />
-              <Line dataKey="waterActual" name="实测饮水量(ml)" stroke="#38bdf8" strokeWidth={2.5}
+              <Line dataKey="waterActual" name="实测饮水量(g)" stroke="#38bdf8" strokeWidth={2.5}
                 dot={{ r: 4, fill: '#38bdf8', stroke: '#111827', strokeWidth: 2 }}
                 activeDot={{ r: 6 }} connectNulls={false} />
             </ComposedChart>

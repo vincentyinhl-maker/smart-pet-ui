@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import RemoteControl from './pages/RemoteControl';
+import DebugSandbox from './pages/DebugSandbox';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -14,6 +15,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/debug" element={<DebugSandbox />} />
       <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/control/:id" element={<ProtectedRoute><RemoteControl /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />

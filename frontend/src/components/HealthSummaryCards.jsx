@@ -47,9 +47,9 @@ export default function HealthSummaryCards({ sensorData }) {
     },
     {
       label: '今日饮水量',
-      sublabel: `7日均值 ${avg?.waterIntake ?? '—'} ml`,
+      sublabel: `7日均值 ${avg?.waterIntake ?? '—'} g`,
       value: cur?.waterIntake ?? '—',
-      unit: 'ml',
+      unit: 'g',
       icon: <Droplets className="w-5 h-5" />,
       color: 'text-blue-400',
       bgColor: 'bg-blue-400/10',

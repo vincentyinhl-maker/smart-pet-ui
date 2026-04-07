@@ -34,3 +34,9 @@ coverage/
 
 # Misc
 *.pem
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+backend/data/
