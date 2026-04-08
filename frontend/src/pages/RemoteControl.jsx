@@ -15,7 +15,7 @@ export default function RemoteControl() {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/history?deviceId=${id}`, {
+      const res = await fetch(`/api/history?deviceId=${id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -32,7 +32,7 @@ export default function RemoteControl() {
   const handleFeed = async () => {
     setFeeding(true);
     try {
-      const res = await fetch('http://localhost:3000/api/feed', {
+      const res = await fetch('/api/feed', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

@@ -25,7 +25,7 @@ const router = express.Router();
 
 /** 通用获取请求目标宠物 ID */
 function getPetId(req) {
-  return req.query.petId || DEFAULT_V2_PET_ID;
+  return req.query.petId || req.body.petId || DEFAULT_V2_PET_ID;
 }
 
 // ── 宠物级健康长效数据接口 ──────────────────────────────────

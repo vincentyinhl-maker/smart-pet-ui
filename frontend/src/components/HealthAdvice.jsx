@@ -74,8 +74,8 @@ function AlertCard({ alert }) {
 }
 
 export default function HealthAdvice({ sensorData, breedId = 'ragdoll' }) {
-  const standard = BREED_STANDARDS[breedId]?.stages.find(s => s.name === '成年(1-8岁)')
-                || BREED_STANDARDS['mix'].stages.find(s => s.name === '成年(1-8岁)');
+  const standard = BREED_STANDARDS[breedId]?.stages.find(s => s.name === '成年猫' || s.name.includes('成年'))
+                || BREED_STANDARDS['mix'].stages.find(s => s.name === '成年猫' || s.name.includes('成年'));
 
   const result = analyzeHealth({
     current:  sensorData.current,

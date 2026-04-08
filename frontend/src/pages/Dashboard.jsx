@@ -38,7 +38,7 @@ export default function Dashboard() {
     async function fetchCoreData() {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:3000/api/health/sensor-data?petId=${petId}`);
+        const res = await fetch(`/api/health/sensor-data?petId=${petId}`);
         const result = await res.json();
         if (result.success) {
           setSensorData(result.data);
@@ -63,7 +63,7 @@ export default function Dashboard() {
     setMealLoading(true);
     try {
       const payload = type === 'food' ? { petId, food: val } : { petId, water: val };
-      const res = await fetch('http://localhost:3000/api/health/extra-meal', {
+      const res = await fetch('/api/health/extra-meal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -96,7 +96,7 @@ export default function Dashboard() {
         setSelectedBreedId(updates.breedId); // 同步本地 UI 状态
       }
 
-      const res = await fetch(`http://localhost:3000/api/pets/${petId}`, {
+      const res = await fetch(`/api/pets/${petId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

@@ -13,7 +13,7 @@ const CAT_MODELS = [
 export default function DebugSandbox() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('MyOreo');
-  const [petName, setPetName] = useState('奥利奥');
+  const [petName, setPetName] = useState('HeyboPet');
   const [breedType, setBreedType] = useState('ragdoll');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -22,7 +22,7 @@ export default function DebugSandbox() {
     setLoading(true);
     setResult(null);
     try {
-      const res = await fetch('http://localhost:3000/api/debug/seed-pet', {
+      const res = await fetch('/api/debug/seed-pet', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, petName, breedType })

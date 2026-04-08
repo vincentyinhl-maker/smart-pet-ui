@@ -86,7 +86,7 @@ const testPetId = 'pet_heybo_test_001';
 const existingPet = db.prepare('SELECT id FROM pets WHERE id = ?').get(testPetId);
 if (!existingPet) {
   db.prepare('INSERT INTO pets (id, name, breed) VALUES (?, ?, ?)')
-    .run(testPetId, '奥利奥 (Oreo)', 'ragdoll');
+    .run(testPetId, 'HeyboPet', 'ragdoll');
     
   // 自动绑定默认设备到该猫咪（兼容老环境变量逻辑）
   const devFeeder = process.env.DEVICE_ID_FEEDER || 'dev_f_01';

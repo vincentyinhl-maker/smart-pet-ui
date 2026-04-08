@@ -9,7 +9,7 @@ export default function DietWaterChart({ petId, petName = '小可爱' }) {
     async function fetchData() {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:3000/api/health/diet-trend?petId=${petId}&days=360`);
+        const res = await fetch(`/api/health/diet-trend?petId=${petId}&days=360`);
         const result = await res.json();
         if (result.success && result.data.length > 0) {
           const reversed = [...result.data].reverse();
