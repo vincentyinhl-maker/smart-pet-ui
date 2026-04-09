@@ -7,6 +7,7 @@
 
 import express from 'express';
 import db, { upsertDailyRollup } from '../db/database.js';
+import eventBus, { IOT_EVENTS } from '../services/eventBus.js';
 
 const router = express.Router();
 
@@ -133,6 +134,22 @@ router.get('/pets', (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
+});
+
+/**
+ * [NEW] 极速并发打点注入接口 - 专门用于压力测试
+ * 直接跳过 DB 写入，投递到 EventBus
+ */
+router.post('/inject-raw', (req, res) => {
+  const { tuyaDeviceId, metricType, value } = req.body;
+  
+  eventBus.emit(IOT_EVENTS.STATION_DATA_RECEIVED, {
+    tuyaDeviceId,
+    metricType,
+    value
+  });
+
+  res.json({ success: true });
 });
 
 export default router;

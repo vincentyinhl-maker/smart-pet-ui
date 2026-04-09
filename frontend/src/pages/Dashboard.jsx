@@ -14,7 +14,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [selectedBreedId, setSelectedBreedId] = useState('ragdoll');
-  const [petId, setPetId] = useState(localStorage.getItem('heybo_active_pet_id') || 'pet_heybo_test_001');
+  const [petId, setPetId] = useState(localStorage.getItem('heybo_active_pet_id') || 'cat_bengal');
 
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [mealLoading, setMealLoading] = useState(false);
@@ -49,8 +49,9 @@ export default function Dashboard() {
         }
       } catch (err) {
         console.error("Failed to fetch sensor data:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     fetchCoreData();
   }, [petId, refreshTrigger]);

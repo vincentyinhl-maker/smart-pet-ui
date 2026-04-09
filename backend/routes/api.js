@@ -1,18 +1,32 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import { findUserByEmail } from '../db/database.js';
 import { mockDevices, mockHistory } from '../data/mockData.js';
 
 const router = express.Router();
 const SECRET_KEY = 'super_secret_pet_key_for_demo';
 
-// POST /api/login - 用户登录
+// POST /api/login - 用户登录 (V4.2 数据库对齐版)
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
-  if (email === 'demo@pet.com' && password === '123456') {
-    const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '2h' });
-    return res.json({ token, user: { name: '猫主子', email } });
+  
+  // 核心：从数据库查询用户
+  const user = findUserByEmail(email);
+
+  if (user && user.password === password) {
+    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, SECRET_KEY, { expiresIn: '24h' });
+    return res.json({ 
+      token, 
+      user: { 
+        id: user.id,
+        name: user.name, 
+        email: user.email,
+        role: user.role 
+      }
+    });
   }
-  return res.status(401).json({ error: '邮箱或密码错误，请使用 demo@pet.com / 123456' });
+
+  return res.status(401).json({ error: '邮箱或密码错误，演示请使用 demo@heybopet.com / demo123' });
 });
 
 // Auth Middleware

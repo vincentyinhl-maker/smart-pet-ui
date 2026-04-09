@@ -4,7 +4,11 @@ import dotenv from 'dotenv';
 import apiRoutes from './routes/api.js';
 import healthDataRoutes from './routes/healthData.js';
 import debugRoutes from './routes/debug.js';
+import webhookRoutes from './routes/webhook.js';
+import claimRoutes from './routes/claim.js';
 import { startPoller } from './tuya/tuyaPoller.js';
+import { startDataQueueProcessor } from './services/dataQueue.js';
+import { startStatsScheduler } from './services/statsService.js';
 
 dotenv.config();
 
@@ -18,6 +22,8 @@ app.use(express.json());
 app.use('/api', apiRoutes);          // 原有路由（登录/设备列表等）
 app.use('/api', healthDataRoutes);   // 健康数据 + 设备控制
 app.use('/api/debug', debugRoutes);  // V3.0 上帝模式调试通道
+app.use('/api/webhook', webhookRoutes); // V4.0 公共 Webhook 入口
+app.use('/api/claim', claimRoutes);     // V4.1 影子数据认领入口
 
 // ── 系统健康检查 ───────────────────────────────────────────────
 app.get('/health', (req, res) => {
@@ -29,7 +35,13 @@ app.listen(PORT, async () => {
   console.log(`\n🚀 Smart Pet Backend → http://localhost:${PORT}`);
   console.log('──────────────────────────────────────────');
 
-  // 启动数据拉取定时任务（涂鸦连接 or 演示模式）
+  // 启动高并发数据缓冲队列
+  startDataQueueProcessor();
+
+  // 启动日度统计对账引擎 (V4.1)
+  startStatsScheduler();
+
+  // 启动动态设备轮询引擎 (V4.1)
   try {
     await startPoller();
   } catch (err) {

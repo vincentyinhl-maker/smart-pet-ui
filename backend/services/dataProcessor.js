@@ -1,18 +1,11 @@
-/**
- * backend/services/dataProcessor.js (V2.0 包含 Data Imputation 引擎)
- *
- * 将数据库宠物健康的日切记录转化为前端所需的平滑聚合格式。
- * 当请求数十天甚至 360 天趋势数据且数据库存在缺口（断网断电、设备送修）时，
- * 系统将利用内置的自动滑窗算法 (Moving Average Imputation) 推算出合理的历史值以防图表断层。
- */
-
 import db, {
   getPetDailyRollups,
-  DEFAULT_V2_PET_ID,
   getAllDeviceSnapshots,
   updatePet,
   upsertDailyRollup
 } from '../db/database.js';
+
+const DEFAULT_V2_PET_ID = 'cat_bengal'; // V3.2 演示宇宙默认主宠
 
 // ── 日期基础工具 ───────────────────────────────────────────
 function toDateStr(date) {
@@ -40,7 +33,8 @@ function applyMovingAverageImputation(rawRows, totalDays, endDataStr) {
   const dateSeries = generateDateSeries(endDataStr, totalDays);
   
   // Array 转 Map 以防万一，用 O(1) 取数
-  const dataMap = new Map(rawRows.map(r => [r.date, r]));
+  const safeRows = rawRows || [];
+  const dataMap = new Map(safeRows.map(r => [r.date, r]));
   
   const smoothData = [];
   

@@ -4,8 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { PawPrint, Mail, Lock } from 'lucide-react';
 
 export default function Login() {
-  const [email, setEmail] = useState('demo@pet.com');
-  const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState('henry@heybopet.com');
+  const [password, setPassword] = useState('heybo2026');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -81,6 +81,24 @@ export default function Login() {
             {loading ? '正在登录...' : '进入宠物空间'}
           </button>
         </form>
+
+        <div className="mt-8 pt-6 border-t border-white/5 text-center">
+          <p className="text-xs text-gray-500 mb-2">演示建议</p>
+          <div className="flex flex-col space-y-2">
+            <button 
+              onClick={() => { setEmail('henry@heybopet.com'); setPassword('heybo2026'); }}
+              className="text-[10px] text-primary/60 hover:text-primary transition-colors"
+            >
+              实物设备演示: henry@heybopet.com / heybo2026
+            </button>
+            <button 
+              onClick={() => { setEmail('demo@heybopet.com'); setPassword('demo123'); }}
+              className="text-[10px] text-gray-600 hover:text-gray-400 transition-colors"
+            >
+              7大病理猫宇宙: demo@heybopet.com / demo123
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

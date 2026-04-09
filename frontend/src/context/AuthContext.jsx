@@ -13,16 +13,26 @@ export const AuthProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
+      if (!res.ok) {
+        const errorText = await res.text().catch(() => '连接服务器失败');
+        let errorData;
+        try { errorData = JSON.parse(errorText); } catch(e) {}
+        throw new Error(errorData?.error || `服务器错误: ${res.status}`);
+      }
+
       const data = await res.json();
-      if (res.ok && data.token) {
+      if (data.token) {
         setUser(data.user);
         setToken(data.token);
         return true;
       } else {
-        throw new Error(data.error);
+        throw new Error(data.error || '登录详情缺失');
       }
     } catch (e) {
-      console.error(e);
+      console.error('[Auth] Login Error:', e);
+      if (e.message.includes('Unexpected end of JSON input') || e.message.includes('fetch')) {
+         throw new Error('后端服务未启动，请联系 AI 项目经理重启。');
+      }
       throw e;
     }
   };

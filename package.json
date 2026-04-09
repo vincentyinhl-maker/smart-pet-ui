@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "axios": "^1.15.0",
+    "ngrok": "^5.0.0-beta.2"
+  }
+}
